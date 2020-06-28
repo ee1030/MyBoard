@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -38,5 +39,26 @@ public class BoardService {
     @Transactional
     public Long savePost(BoardDto boardDto) {
         return boardRepository.save(boardDto.toEntity()).getId();
+    }
+
+    @Transactional
+    public BoardDto getPost(Long id) {
+        Optional<Board> boardWrapper = boardRepository.findById(id);
+        Board board = boardWrapper.get();
+
+        BoardDto boardDto = BoardDto.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .writer(board.getWriter())
+                .createdDate(board.getCreatedDate())
+                .build();
+
+        return boardDto;
+    }
+
+    @Transactional
+    public void deletePost(Long id) {
+        boardRepository.deleteById(id);
     }
 }
